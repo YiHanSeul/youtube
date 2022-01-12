@@ -1,49 +1,22 @@
-import { is } from "express/lib/request";
-
-let videos = [
-  {
-    title: "First Video",
-    rating: 5,
-    comments: 2,
-    createdAt: "2minutes ago",
-    views: 89,
-    id: 1,
-  },
-  {
-    title: "Second Video",
-    rating: 5,
-    comments: 2,
-    createdAt: "2minutes ago",
-    views: 89,
-    id: 2,
-  },
-  {
-    title: "Third Video",
-    rating: 5,
-    comments: 2,
-    createdAt: "2minutes ago",
-    views: 89,
-    id: 3,
-  },
-];
-export const trending = (req, res) => {
-  return res.render("home", { pageTitle: "Home", videos });
+import Video from "../models/Video";
+//async(비동기) -- await(수행될 때까지 기다려준다)
+//=> 데이터베이스가 데이터 찾을때까지 기다려준다(다음 것이 먼저 수행되는 것을 막음)
+//에러는 try-catch문으로 잡는다.
+export const home = async (req, res) => {
+  const videos = await Video.find({}); //videoJS에 가서 찾음.
+  return res.render("home", { pageTitle: "Home", videos: [] });
 };
 export const watch = (req, res) => {
-  const { id } = req.params; // == const id=req.params.id;
-  const video = videos[id - 1];
-  return res.render("watch", { pageTitle: `Watching : ${video.title}`, video });
+  return res.render("watch", { pageTitle: `Watching` });
 };
 
 export const getEdit = (req, res) => {
   const { id } = req.params;
-  const video = videos[id - 1];
-  return res.render("edit", { pageTitle: `Editing : ${video.title}`, video });
+  return res.render("edit", { pageTitle: `Editing` });
 };
 export const postEdit = (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
-  videos[id - 1].title = title;
   return res.redirect(`/videos/${id}`);
 };
 
@@ -51,15 +24,21 @@ export const getUpload = (req, res) => {
   return res.render("upload", { pageTitle: "Upload Video" });
 };
 export const postUpload = (req, res) => {
-  const { title } = req.body;
-  const newVideo = {
+  const { title, description, hashtags } = req.body;
+  const video = new Video({
     title,
-    rating: 0,
-    comments: 0,
-    createdAt: "just now",
-    views: 0,
-    id: videos.length + 1,
-  };
-  videos.push(newVideo);
+    description,
+    creatdAt: Date.now(),
+    hashtags: hashtags
+      .split(",")
+      .map((word) =>
+        word.trim().startWith("#") ? word.trim() : `#${word.trim()}`
+      ),
+    meta: {
+      views: 0,
+      rating: 0,
+    },
+  });
+  console.log(video);
   return res.redirect("/");
 };
