@@ -11,6 +11,17 @@ const videoSchema = new mongoose.Schema({
     rating: { type: Number, default: 0, required: true },
   },
 });
+videoSchema.static("formatHashtags", function (hashtags) {
+  return hashtags
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`));
+});
+//middleware 인데 save하기 직전에 hashtag가 배열로 저장되고 formmating을 해줌.
+// videoSchema.pre("save", async function () {
+//   this.hashtags = this.hashtags[0]
+//     .split(",")
+//     .map((word) => (word.startsWith("#") ? word : `#${word}`));
+// });
 
 const videoModel = mongoose.model("Video", videoSchema);
 export default videoModel;
