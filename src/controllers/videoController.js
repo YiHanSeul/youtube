@@ -3,7 +3,7 @@ import Video from "../models/Video";
 //=> 데이터베이스가 데이터 찾을때까지 기다려준다(다음 것이 먼저 수행되는 것을 막음)
 //에러는 try-catch문으로 잡는다.
 export const home = async (req, res) => {
-  const videos = await Video.find({}); //videoJS에 가서 찾음.
+  const videos = await Video.find({}).sort({ creatdAt: "desc" }); //videoJS에 가서 찾음.
   //console.log(videos);
   return res.render("home", { pageTitle: "Home", videos });
 };
@@ -67,4 +67,17 @@ export const deleteVideo = async (req, res) => {
   //delete video video
   await Video.findByIdAndDelete(id);
   return res.redirect("/");
+};
+
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  let videos = [];
+  if (keyword) {
+    videos = await Video.find({
+      title: {
+        $regex: new RegExp(keyword, "i"),
+      },
+    });
+  }
+  return res.render("search", { pageTitle: "Search", videos });
 };
