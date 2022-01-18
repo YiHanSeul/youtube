@@ -7,8 +7,11 @@ export const home = async (req, res) => {
   console.log(videos);
   return res.render("home", { pageTitle: "Home", videos });
 };
-export const watch = (req, res) => {
-  return res.render("watch", { pageTitle: `Watching` });
+export const watch = async (req, res) => {
+  const { id } = req.params;
+  const video = await Video.findById(id); //id로 영상을 찾아낼수있는 기능
+  console.log(video);
+  return res.render("watch", { pageTitle: video.title, video });
 };
 
 export const getEdit = (req, res) => {
