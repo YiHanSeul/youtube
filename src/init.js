@@ -1,5 +1,6 @@
 import "./db";
 import "./models/Video";
+import "./models/User";
 import app from "./server";
 //init.js파일은 필요한 모든것들을 import 하는 역할.
 const PORT = 4000;
