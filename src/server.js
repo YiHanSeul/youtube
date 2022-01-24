@@ -19,8 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     secret: "Hello",
-    resave: true,
-    saveUninitialized: true,
+    resave: false, //만료날짜 설정
+    saveUninitialized: false, //session을 수정할때만 DB에 저장.
     store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/youtube" }),
   })
 );
